@@ -8,6 +8,9 @@ import CytoscapeJsRenderer from './CytoscapeJsRenderer'
 // Base style for the region for the network renderer
 const STYLE = { width: '100%', height: '100%' };
 
+const TYPE_CX = 'cx'
+const TYPE_CYJS = 'cyjs'
+
 // Empty Cytocape.js network
 const EMPTY_NET = {
   data: {},
@@ -162,11 +165,13 @@ class CyViewer extends Component {
   }
 
   componentWillMount() {
-    this.cx2js(this.props.cxNetwork);
+    if(this.props.networkType === TYPE_CX){
+      this.cx2js(this.props.cxNetwork);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.cxNetwork !== nextProps.cxNetwork) {
+    if(this.props.cxNetwork !== nextProps.cxNetwork && this.props.networkType === TYPE_CX) {
       console.log('NEED update')
       this.cx2js(nextProps.cxNetwork);
     }
@@ -212,10 +217,13 @@ class CyViewer extends Component {
 
 CyViewer.propTypes = {
   // Network data in CX
-  cxNetwork: PropTypes.array,
+  network: PropTypes.array,
 
   // Style of the area used by the renderer
   style: PropTypes.object,
+
+  // Format of network proptype 
+  networkType: PropTypes.string,
 
   // Style for the network, which is RENDERER DEPENDENT, not CSS
   networkStyle: PropTypes.object,
@@ -236,11 +244,12 @@ CyViewer.propTypes = {
 
 
 CyViewer.defaultProps = {
-  cxNetwork: [],
+  network: [],
   command: null,
   style: STYLE,
   eventHandlers: DEF_EVENT_HANDLERS.toJS(),
   rendererOptions: {},
+  cxNetworkType: TYPE_CXJS,
   serviceUrl: 'http://ci-dev-serv.ucsd.edu:3001/cx2cyjs'
 };
 
